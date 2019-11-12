@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+	<title>NASA Data API</title>
+	<meta charset="utf-8"/>
+	<style>
+		* {color: #FFF; margin:0; background-image: url(https://cdn.wallpapersafari.com/13/12/xV8Ega.png)}
+		h1 {text-decoration: underline; text-align: center;}
+		#HWQ {padding-left: 3%; padding-right: 3%}
+		#test {text-align: center;}
+		#Ast_Info {text-align: center;}
+	</style>
+	<script>
+		function getAsteroids() {
+			request = new XMLHttpRequest();
+			console.log("1 - request object created");
+ 
+			request.open("GET", "https://api.nasa.gov/neo/rest/v1/neo/browse?api_key=uQrIUygCkK8KbL2Q9jWmqhpuLhKzdu3O1eZfgWoq", true);
+			console.log("2 - opened request file");
+ 
+			request.onreadystatechange = function() {
+				console.log("3 - readystatechange event fired.");
+				if (request.readyState == 4 && request.status == 200) {
+					// Step 5: wait for done + success
+					result = request.responseText;
+					//alert(result);
+					asteroids = JSON.parse(result);
+					console.log(asteroids);
+		//			console.log(asteroids["near_earth_objects"][11]);
+		//console.log(asteroids["near_earth_objects"][11]["close_approach_data"][0]["close_approach_date_full"]);
+					ast1_id = asteroids["near_earth_objects"][0]["id"];
+					ast1_appDate = asteroids["near_earth_objects"][0]["close_approach_data"][0]["close_approach_date_full"];
+					ast1_Mag = asteroids["near_earth_objects"][0]["absolute_magnitude_h"];
+					ast1_hazard = asteroids["near_earth_objects"][0]["is_potentially_hazardous_asteroid"];
+					ast1_url = asteroids["near_earth_objects"][0]["nasa_jpl_url"];
+					document.getElementById("data1").innerHTML = "Asteroid id: " + ast1_id + " <br> Arrival Date: " + ast1_appDate + " <br> Absolute Magnitude: " + ast1_Mag + " <br> Potential Hazard: " + ast1_hazard + " <br> More Info: " + ast1_url;
+
+					//NASA did not record the approaching data of the asteroids 2-9. So starting off with 10 or array index of 11
+					ast2_id = asteroids["near_earth_objects"][11]["id"];
+					ast2_appDate = asteroids["near_earth_objects"][11]["close_approach_data"][0]["close_approach_date_full"];
+					ast2_Mag = asteroids["near_earth_objects"][11]["absolute_magnitude_h"];
+					ast2_hazard = asteroids["near_earth_objects"][11]["is_potentially_hazardous_asteroid"];
+					ast2_url = asteroids["near_earth_objects"][11]["nasa_jpl_url"];
+					document.getElementById("data2").innerHTML = "Asteroid id: " + ast2_id + " <br> Arrival Date: " + ast2_appDate + " <br> Absolute Magnitude: " + ast2_Mag + " <br> Potential Hazard: " + ast2_hazard + " <br> More Info: " + ast2_url;
+
+					ast3_id = asteroids["near_earth_objects"][12]["id"];
+					ast3_appDate = asteroids["near_earth_objects"][12]["close_approach_data"][0]["close_approach_date_full"];
+					ast3_Mag = asteroids["near_earth_objects"][12]["absolute_magnitude_h"];
+					ast3_hazard = asteroids["near_earth_objects"][12]["is_potentially_hazardous_asteroid"];
+					ast3_url = asteroids["near_earth_objects"][12]["nasa_jpl_url"];
+					document.getElementById("data3").innerHTML = "Asteroid id: " + ast3_id + " <br> Arrival Date: " + ast3_appDate + " <br> Absolute Magnitude: " + ast3_Mag + " <br> Potential Hazard: " + ast3_hazard + " <br> More Info: " + ast3_url;
+
+					document.getElementById("test").innerHTML = "Historical NASA Database";
+					
+				}
+				else if (request.readyState == 4 && request.status != 200) {
+					document.getElementById("test").innerHTML = "Something is wrong!  Check the logs";
+				}
+				else if (request.readyState == 3) {
+					document.getElementById("test").innerHTML = "Too soon!  Try again";
+				}
+			}
+
+			request.send();
+			console.log("4 - Request sent");
+		}
+	</script>
+</head>
+
+
+<body onload="getAsteroids()">
+
+	<header>
+		<br>
+		<h1>Asteroids</h1>
+		<div id="test"> NASA Data </div>
+		<br>
+	</header>
+	<section id="HWQ">
+		<br>
+		<div id="hw_answers">
+			1) This API comes from NASA. It is the Asteroids - NeoWs (Near Earth Object Web Service) API that provides a list of asteroids based on their closest approach date to Earth. The API also provides other data such as estimated diameter, id number, whether it is hazardous, estimated velocity, and pictures of the asteroid. For this homework, I only selected a few pieces of information provided because the data provided in its entirely is enormous (a total of 22315 asteroids were recorded with a lot more specific information about each one).
+			<br><br>
+			2) Website: https://api.nasa.gov/#browseAPI or https://api.nasa.gov/neo/rest/v1/neo/browse?api_key=uQrIUygCkK8KbL2Q9jWmqhpuLhKzdu3O1eZfgWoq
+			<br><br>
+			3) Options used for the API Request: GET format. Parameters used to call the general API was GET, true, and the API key in the query string. In this case, https://api.nasa.gov/neo/rest/v1/neo/browse?api_key=uQrIUygCkK8KbL2Q9jWmqhpuLhKzdu3O1eZfgWoq. There was also the option to add in a start_date and a end_date in the query string (in which case these two values would be added after the ? and before the key). I found virtually no difference in the information found between the two and so chose to use just the API key string. 
+			<br>
+			In order to access and display the information found in the JSON data section on this page, I had to index into the database in various ways. The database was poorly organized which meant some asteroids were missing information and it was very difficult to access individual asteroid information. To get the id of each asteroid, I had to first parse the database and store it in a variable named asteroids. Then, I had to access the "near_earth_objects" object in varnasteroids which contained an array of asteroids information. Once I indexed into the array, I then had to access the individual variables storing the data I wanted. To provide an example, in order to access the data of the first asteroid, I wrote asteroids["near_earth_objects"][0]["id"]. To find the approach data which was stored in another array inside the near_earth_object array, I had to write asteroids["near_earth_objects"][11]["close_approach_data"][0]["close_approach_date_full"]. To find out whether NASA had categorized that particular asteroid as a hazard, I had to write asteroids["near_earth_objects"][11]["is_potentially_hazardous_asteroid"]. 
+			<br><br>
+			4) This API would be useful in a few scenarios:
+			<br> First, this API data would be great if someone wanted to design an app that would alert users about when an asteroid or comet was coming. Astronomy lovers, families or people who think an asteroid viewing would be a fun event would use this data to plan out their trips because they would know approximate time/date, the name of the asteroid, and the approximate size of the asteroid. It's similar to apps people use to determine when the next solar event happens so they can make plans to visit the location and take pictures. 
+			<br> Second, anyone interested in doing research on astronomy would find this useful. They could study how frequently asteroids arrive (sorted by size of the asteroid), their typical velocity, how often they're dangerous, etc. There are a lot of potential factors to consider as these researchers are looking through historical trends. If they write a program that takes in this data and organizes it, they have a lot of information they could use. They could be using this data to make a trip to study the travel pattern of the asteroid through a telescope or other equipment. Knowing where, when and what they want to study would be very useful for their work on understanding what happens in space. 
+			<br>
+		</div>
+		<br>
+	</section>
+
+	<section id="Ast_Info">
+		<br>
+		<h1> Select JSON Data from API </h1>
+		<br>
+		<div id="data1">Data getting ready</div>
+		<br>
+		<div id="data2"> </div>
+		<br>
+		<div id="data3"> </div>
+		<br>
+	</section>
+</body>
+</html>
